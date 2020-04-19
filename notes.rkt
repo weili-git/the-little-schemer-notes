@@ -222,7 +222,7 @@
       ((null? lat) '())
       ((number? (car lat)) (no-nums (cdr lat)))
       (else (cons (car lat) (no-nums (cdr lat)))))))
-; all0nums
+; all-nums
 (define all-nums
   (lambda (lat)
     (cond
@@ -250,4 +250,46 @@
 (define one?
   (lambda (n)
     (eqan? n 1))) ;atom can not necessarily be sub-ed.
-      
+
+; rember*
+(define rember*
+  (lambda (a l)
+    (cond
+      ((null? l) '())
+      ((atom? (car l)) (cond
+                           ((eq? a (car l)) (rember* a (cdr l)))
+                           (else (cons (car l) (rember* a (cdr l))))))
+      (else (cons (rember* a (car l)) (rember* a (cdr l)))))))
+; insertR*
+(define insertR*
+  (lambda (new old l)
+    (cond
+      ((null? l) '())
+      ((atom? (car l)) (cond
+                         ((eq? (car l) old) (cons old (cons new (insertR* new old (cdr l)))))
+                         (else (cons (car l) (insertR* new old (cdr l))))))
+      (else (cons (insertR* new old (car l)) (insertR* new old (cdr l)))))))
+; #1-recurring list of atoms, null?
+; recurring list of numers, zero?
+; recurring list of S-expression, atom?
+; #4-change at least one argument when recurring.
+; cdr lat, sub1 n, car l with test termination.
+; occur*
+(define occur*
+  (lambda (a l)
+    (cond
+      ((null? l) 0) ;not '()
+      ((atom? (car l)) (cond
+                         ((eq? a (car l)) (add1 (occur* (cdr l))))
+                         (else (occur* (cdr l)))))
+      (else (add (occur* a (car l)) (occur* a (cdr l)))))))
+; subst*
+(define subst*
+  (lambda (new old l)
+    (cond
+      ((null? l) '())
+      ((atom? (car l)) (cond
+                         ((eq? old (car l)) (cons new (subst* new old (cdr l))))
+                         (else (cons (car l) (subst* new old (cdr l))))))
+      (else (cons (subst* new old (car l)) (subst* new old (cdr l)))))))
+
